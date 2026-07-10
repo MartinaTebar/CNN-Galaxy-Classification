@@ -1,2 +1,2 @@
 # Cool-ML-Astrophysics-Project
-Sashi and Marti
+Sashi and Marti (boom)
