@@ -1,0 +1,37 @@
+device: mps
+train batches: 441 | val batches: 56
+parameters: 11,181,642
+epoch  1/30 | lr 1.00e-04 | train loss 1.3455 acc 0.5193 | val loss 1.0202 acc 0.6471  <- saved
+epoch  2/30 | lr 9.97e-05 | train loss 0.9638 acc 0.6691 | val loss 0.9431 acc 0.6850  <- saved
+epoch  3/30 | lr 9.89e-05 | train loss 0.8453 acc 0.7083 | val loss 1.0306 acc 0.6425
+epoch  4/30 | lr 9.76e-05 | train loss 0.7712 acc 0.7343 | val loss 0.9649 acc 0.6804
+epoch  5/30 | lr 9.57e-05 | train loss 0.7270 acc 0.7520 | val loss 0.8602 acc 0.7008  <- saved
+epoch  6/30 | lr 9.33e-05 | train loss 0.6751 acc 0.7683 | val loss 0.7044 acc 0.7641  <- saved
+epoch  7/30 | lr 9.05e-05 | train loss 0.6505 acc 0.7800 | val loss 0.6978 acc 0.7687  <- saved
+epoch  8/30 | lr 8.72e-05 | train loss 0.6145 acc 0.7883 | val loss 0.6844 acc 0.7738  <- saved
+epoch  9/30 | lr 8.35e-05 | train loss 0.5964 acc 0.7963 | val loss 0.6423 acc 0.7800  <- saved
+epoch 10/30 | lr 7.94e-05 | train loss 0.5769 acc 0.7976 | val loss 0.5844 acc 0.8043  <- saved
+epoch 11/30 | lr 7.50e-05 | train loss 0.5561 acc 0.8076 | val loss 0.6293 acc 0.7919
+epoch 12/30 | lr 7.03e-05 | train loss 0.5343 acc 0.8133 | val loss 0.5875 acc 0.8020
+epoch 13/30 | lr 6.55e-05 | train loss 0.5303 acc 0.8151 | val loss 0.5616 acc 0.8020
+epoch 14/30 | lr 6.04e-05 | train loss 0.4974 acc 0.8283 | val loss 0.5593 acc 0.8077  <- saved
+epoch 15/30 | lr 5.52e-05 | train loss 0.4834 acc 0.8337 | val loss 0.5611 acc 0.8117  <- saved
+epoch 16/30 | lr 5.00e-05 | train loss 0.4656 acc 0.8353 | val loss 0.4982 acc 0.8360  <- saved
+epoch 17/30 | lr 4.48e-05 | train loss 0.4539 acc 0.8423 | val loss 0.5033 acc 0.8343
+epoch 18/30 | lr 3.96e-05 | train loss 0.4449 acc 0.8464 | val loss 0.4993 acc 0.8314
+epoch 19/30 | lr 3.45e-05 | train loss 0.4228 acc 0.8527 | val loss 0.4909 acc 0.8377  <- saved
+epoch 20/30 | lr 2.97e-05 | train loss 0.4101 acc 0.8527 | val loss 0.4994 acc 0.8314
+epoch 21/30 | lr 2.50e-05 | train loss 0.3939 acc 0.8606 | val loss 0.4751 acc 0.8433  <- saved
+epoch 22/30 | lr 2.06e-05 | train loss 0.3908 acc 0.8638 | val loss 0.4439 acc 0.8586  <- saved
+epoch 23/30 | lr 1.65e-05 | train loss 0.3756 acc 0.8694 | val loss 0.4432 acc 0.8586
+epoch 24/30 | lr 1.28e-05 | train loss 0.3665 acc 0.8725 | val loss 0.4441 acc 0.8512
+epoch 25/30 | lr 9.55e-06 | train loss 0.3588 acc 0.8746 | val loss 0.4348 acc 0.8580
+epoch 26/30 | lr 6.70e-06 | train loss 0.3510 acc 0.8760 | val loss 0.4316 acc 0.8626  <- saved
+epoch 27/30 | lr 4.32e-06 | train loss 0.3480 acc 0.8793 | val loss 0.4299 acc 0.8648  <- saved
+epoch 28/30 | lr 2.45e-06 | train loss 0.3477 acc 0.8769 | val loss 0.4249 acc 0.8665  <- saved
+epoch 29/30 | lr 1.09e-06 | train loss 0.3458 acc 0.8777 | val loss 0.4256 acc 0.8671  <- saved
+epoch 30/30 | lr 2.74e-07 | train loss 0.3324 acc 0.8810 | val loss 0.4242 acc 0.8682  <- saved
+
+best val accuracy: 0.8682
+weights saved to /Users/sasha/Documents/MartiSashi/Cool-ML-Astrophysics-Project/checkpoints/resnet18.pt
+Do NOT touch the test set until you have stopped changing the model.

@@ -1,0 +1,35 @@
+validation images: 1768
+overall accuracy      : 0.8682
+random-guess baseline : 0.1000
+majority-class baseline: 0.1493  (always predict 'Round Smooth')
+
+class                             n   recall   precis
+------------------------------------------------------
+Disturbed                       108    0.444    0.676
+Merging                         185    0.881    0.911
+Round Smooth                    264    0.973    0.908
+In-between Round Smooth         202    0.946    0.888
+Cigar Shaped Smooth              33    0.909    0.833
+Barred Spiral                   204    0.887    0.874
+Unbarred Tight Spiral           183    0.825    0.825
+Unbarred Loose Spiral           260    0.800    0.782
+Edge-on without Bulge           142    0.937    0.911
+Edge-on with Bulge              187    0.925    0.951
+
+confusion matrix (row = true, col = predicted)
+          0     1     2     3     4     5     6     7     8     9
+  0      48     1     6    15     2     4     1    26     0     5
+  1       1   163     4     2     0     2     1     9     2     1
+  2       0     1   257     0     0     1     4     1     0     0
+  3       2     2     0   191     1     0     6     0     0     0
+  4       0     0     0     1    30     1     1     0     0     0
+  5       6     3     1     1     1   181     4     6     1     0
+  6       1     1    12     3     0     1   151    12     2     0
+  7      11     4     3     1     0    15    14   208     2     2
+  8       1     1     0     0     2     1     1     2   133     1
+  9       1     3     0     1     0     1     0     2     6   173
+
+worst confusions:
+    26x  'Disturbed' called 'Unbarred Loose Spiral'
+    15x  'Disturbed' called 'In-between Round Smooth'
+    15x  'Unbarred Loose Spiral' called 'Barred Spiral'
