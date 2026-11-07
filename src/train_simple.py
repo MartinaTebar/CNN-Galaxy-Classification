@@ -1,9 +1,9 @@
 """
-train.py
---------
-The smallest honest training loop. Run from the repo root:
+train_simple.py
+---------------
+The smallest honest training loop, for SimpleCNN. Run from the repo root:
 
-    python src/train.py
+    python src/train_simple.py | tee logs/simplecnn.txt
 
 MENTAL MODEL
   Training is one loop, repeated:
@@ -21,8 +21,10 @@ MENTAL MODEL
   four lines.
 """
 
+import random
 from pathlib import Path
 
+import numpy as np
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
@@ -37,7 +39,17 @@ LR = 1e-3
 WEIGHT_DECAY = 1e-4
 RESOLUTION = 128
 NUM_WORKERS = 4          # set to 0 if you hit multiprocessing errors
+SEED = 42                # fixes weight init, shuffling and augmentation
 CKPT_PATH = Path(__file__).resolve().parent.parent / "checkpoints" / "simplecnn.pt"
+
+
+def set_seed(seed: int) -> None:
+    # Same seed -> same initial weights, same batch order, same random
+    # flips/rotations. GPU kernels (especially MPS) are not bit-for-bit
+    # deterministic, so reruns land very close but not always identical.
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
 
 
 def get_device() -> torch.device:
@@ -127,8 +139,9 @@ def evaluate(model, loader, criterion, device):
 
 
 def main() -> None:
+    set_seed(SEED)
     device = get_device()
-    print(f"device: {device}")
+    print(f"device: {device} | seed: {SEED}")
 
     train_loader = make_loader("train", train=True)
     val_loader = make_loader("val", train=False)

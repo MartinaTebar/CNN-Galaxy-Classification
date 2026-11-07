@@ -6,7 +6,8 @@ Eyeball the CenterCrop before committing to a 60-epoch run.
     python3 src/preview_crop.py
 
 Top row = original 256x256. Bottom row = the same galaxy after
-CenterCrop(180). If arms are being clipped, raise the number. If there's
+CenterCrop(CROP), where CROP must match the value used in
+dataset.build_transforms (currently 140). If arms are being clipped, raise the number. If there's
 still a wide empty margin, lower it.
 """
 

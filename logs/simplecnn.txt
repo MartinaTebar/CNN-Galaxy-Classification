@@ -1,0 +1,12 @@
+device: mps | seed: 42
+train batches: 220 | val batches: 28
+parameters: 391,466
+epoch  1/60 | lr 1.00e-03 | train loss 1.7681 acc 0.3571 | val loss 1.6996 acc 0.3869  <- saved
+epoch  2/60 | lr 9.99e-04 | train loss 1.5748 acc 0.4313 | val loss 1.6868 acc 0.3988  <- saved
+epoch  3/60 | lr 9.97e-04 | train loss 1.4349 acc 0.4821 | val loss 1.4949 acc 0.4593  <- saved
+epoch  4/60 | lr 9.94e-04 | train loss 1.3031 acc 0.5385 | val loss 1.3464 acc 0.5226  <- saved
+epoch  5/60 | lr 9.89e-04 | train loss 1.1923 acc 0.5798 | val loss 1.4539 acc 0.4836
+epoch  6/60 | lr 9.83e-04 | train loss 1.1124 acc 0.6174 | val loss 1.1522 acc 0.6239  <- saved
+epoch  7/60 | lr 9.76e-04 | train loss 1.0546 acc 0.6343 | val loss 1.2191 acc 0.5730
+epoch  8/60 | lr 9.67e-04 | train loss 1.0194 acc 0.6546 | val loss 1.2783 acc 0.5690
+epoch  9/60 | lr 9.57e-04 | train loss 0.9793 acc 0.6648 | val loss 1.2337 acc 0.5984

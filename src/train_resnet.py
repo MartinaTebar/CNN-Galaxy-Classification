@@ -1,9 +1,14 @@
 """
-train.py
---------
-The smallest honest training loop. Run from the repo root:
+train_resnet.py
+---------------
+The smallest honest training loop, for ResNet18. Run from the repo root:
 
-    python src/train.py
+    python src/train_resnet.py          | tee logs/resnet_pretrained.txt
+    python src/train_resnet.py --random | tee logs/resnet_random.txt
+
+The first starts from ImageNet weights and saves
+checkpoints/resnet18_pretrained.pt; the second starts from random weights
+and saves checkpoints/resnet18_random.pt.
 
 MENTAL MODEL
   Training is one loop, repeated:
@@ -21,14 +26,17 @@ MENTAL MODEL
   four lines.
 """
 
+import argparse
+import random
 from pathlib import Path
 
+import numpy as np
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 
 from dataset import Galaxy10Dataset, build_transforms, load_split, CLASS_NAMES
-from model_simple import SimpleCNN, count_parameters
+from model_simple import count_parameters
 from model_resnet import build_resnet18
 
 # ---------------------------------------------------------------- config
@@ -38,8 +46,17 @@ LR = 1e-4
 WEIGHT_DECAY = 1e-4
 RESOLUTION = 224
 NUM_WORKERS = 4          # set to 0 if you hit multiprocessing errors
-PRETRAINED = True
-CKPT_PATH = Path(__file__).resolve().parent.parent / "checkpoints" / "resnet18.pt" 
+SEED = 42                # fixes weight init, shuffling and augmentation
+CKPT_DIR = Path(__file__).resolve().parent.parent / "checkpoints"
+
+
+def set_seed(seed: int) -> None:
+    # Same seed -> same initial weights, same batch order, same random
+    # flips/rotations. GPU kernels (especially MPS) are not bit-for-bit
+    # deterministic, so reruns land very close but not always identical.
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
 
 
 def get_device() -> torch.device:
@@ -61,7 +78,10 @@ def make_loader(split: str, train: bool) -> DataLoader:
     ds = Galaxy10Dataset(
         images,
         labels,
-        transform=build_transforms(RESOLUTION, pretrained=PRETRAINED, train=train),
+        # ImageNet normalisation for BOTH the pretrained and the random-init
+        # run, so the starting weights are the only thing that differs
+        # between the two experiments.
+        transform=build_transforms(RESOLUTION, pretrained=True, train=train),
     )
     return DataLoader(
         ds,
@@ -129,14 +149,23 @@ def evaluate(model, loader, criterion, device):
 
 
 def main() -> None:
+    ap = argparse.ArgumentParser(description="Train ResNet18 on Galaxy10.")
+    ap.add_argument("--random", action="store_true",
+                    help="start from random weights instead of ImageNet")
+    args = ap.parse_args()
+    pretrained = not args.random
+    ckpt_path = CKPT_DIR / ("resnet18_pretrained.pt" if pretrained else "resnet18_random.pt")
+
+    set_seed(SEED)
     device = get_device()
-    print(f"device: {device}")
+    print(f"device: {device} | seed: {SEED} | "
+          f"init: {'ImageNet pretrained' if pretrained else 'random'}")
 
     train_loader = make_loader("train", train=True)
     val_loader = make_loader("val", train=False)
     print(f"train batches: {len(train_loader)} | val batches: {len(val_loader)}")
 
-    model = build_resnet18(num_classes=len(CLASS_NAMES), pretrained=False).to(device)
+    model = build_resnet18(num_classes=len(CLASS_NAMES), pretrained=pretrained).to(device)
     print(f"parameters: {count_parameters(model):,}")
 
     criterion = nn.CrossEntropyLoss()
@@ -144,7 +173,7 @@ def main() -> None:
     optimiser = torch.optim.AdamW(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimiser, T_max=EPOCHS)
 
-    CKPT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    ckpt_path.parent.mkdir(parents=True, exist_ok=True)
     best_val_acc = 0.0
 
     for epoch in range(1, EPOCHS + 1):
@@ -161,7 +190,7 @@ def main() -> None:
             # LAST epoch is usually not the best one - it has typically begun
             # to overfit. This is your "early stopping, poor man's edition".
             best_val_acc = va_acc
-            torch.save(model.state_dict(), CKPT_PATH)
+            torch.save(model.state_dict(), ckpt_path)
             flag = "  <- saved"
 
         print(
@@ -172,7 +201,7 @@ def main() -> None:
         )
 
     print(f"\nbest val accuracy: {best_val_acc:.4f}")
-    print(f"weights saved to {CKPT_PATH}")
+    print(f"weights saved to {ckpt_path}")
     print("Do NOT touch the test set until you have stopped changing the model.")
 
 
