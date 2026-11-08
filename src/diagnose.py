@@ -28,11 +28,11 @@ from dataset import Galaxy10Dataset, build_transforms, load_split, CLASS_NAMES
 from model_simple import SimpleCNN
 from model_resnet import build_resnet18
 
-# RESOLUTION = 128
-RESOLUTION = 224
+RESOLUTION = 140 # simplecnn
+# RESOLUTION = 224 # resnet18
 BATCH_SIZE = 64
-# CKPT_PATH = Path(__file__).resolve().parent.parent / "checkpoints" / "simplecnn.pt"
-CKPT_PATH = Path(__file__).resolve().parent.parent / "checkpoints" / "resnet18.pt"
+CKPT_PATH = Path(__file__).resolve().parent.parent / "checkpoints" / "simplecnn.pt"
+# CKPT_PATH = Path(__file__).resolve().parent.parent / "checkpoints" / "resnet18.pt"
 
 
 def get_device() -> torch.device:
@@ -66,12 +66,12 @@ def main() -> None:
         labels,
         # train=False: NO augmentation. Evaluation must be deterministic.
         # transform=build_transforms(RESOLUTION, pretrained=False, train=False),
-        transform=build_transforms(RESOLUTION, pretrained=True, train=False),
+        transform=build_transforms(RESOLUTION, pretrained=False, train=False),
     )
     loader = DataLoader(ds, batch_size=BATCH_SIZE, shuffle=False, num_workers=2)
 
-    # model = SimpleCNN(num_classes=len(CLASS_NAMES)).to(device)
-    model = build_resnet18(num_classes=len(CLASS_NAMES), pretrained=False).to(device)
+    model = SimpleCNN(num_classes=len(CLASS_NAMES)).to(device)
+    # model = build_resnet18(num_classes=len(CLASS_NAMES), pretrained=False).to(device)
     model.load_state_dict(torch.load(CKPT_PATH, map_location=device))
 
     y_true, y_pred = collect_predictions(model, loader, device)

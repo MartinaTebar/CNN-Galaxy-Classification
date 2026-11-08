@@ -1,0 +1,73 @@
+device: mps
+test images: 1768
+random-guess baseline  : 0.1000
+majority-class baseline: 0.1493  (always predict 'Round Smooth')
+
+model                             accuracy  bal. acc  macro F1
+--------------------------------------------------------------
+SimpleCNN                           0.8037    0.7823    0.7825
+ResNet18 (random init)              0.8428    0.8274    0.8247
+ResNet18 (ImageNet pretrained)      0.8693    0.8673    0.8606
+
+per-class recall
+class                            n   SimpleCNN ResNet rand  ResNet pre
+-----------------------------------------------------------------------
+Disturbed                      108       0.324       0.426       0.648
+Merging                        186       0.817       0.876       0.914
+Round Smooth                   264       0.943       0.939       0.932
+In-between Round Smooth        202       0.916       0.955       0.950
+Cigar Shaped Smooth             33       0.788       0.848       0.939
+Barred Spiral                  204       0.804       0.887       0.907
+Unbarred Tight Spiral          182       0.709       0.758       0.758
+Unbarred Loose Spiral          260       0.692       0.715       0.765
+Edge-on without Bulge          142       0.915       0.937       0.923
+Edge-on with Bulge             187       0.914       0.930       0.936
+
+confusion matrix - SimpleCNN (row = true, col = predicted)
+          0     1     2     3     4     5     6     7     8     9
+  0      35     6    10     7     2    12     3    28     3     2
+  1       3   152    10     3     0     3     4     4     0     7
+  2       0     4   249     0     0     1     5     5     0     0
+  3       1     6     3   185     3     0     1     3     0     0
+  4       0     0     0     2    26     0     0     1     1     3
+  5       3     6     1     0     2   164     4    21     2     1
+  6       0     1    10     3     0     2   129    36     1     0
+  7      11    13     6     2     1    19    25   180     1     2
+  8       3     3     0     0     0     0     1     0   130     5
+  9       1     1     0     2     0     3     0     1     8   171
+
+confusion matrix - ResNet18 (random init) (row = true, col = predicted)
+          0     1     2     3     4     5     6     7     8     9
+  0      46     6    11     6     2    10     3    18     5     1
+  1       3   163     7     3     0     3     2     1     0     4
+  2       1     4   248     0     0     0     8     3     0     0
+  3       1     0     0   193     3     1     3     1     0     0
+  4       0     0     1     1    28     0     0     0     2     1
+  5       5     1     3     1     2   181     0    10     0     1
+  6       1     1    15     3     0     5   138    18     1     0
+  7      14    12     2     4     0     7    33   186     1     1
+  8       1     4     0     0     0     0     2     1   133     1
+  9       1     0     0     0     0     2     0     2     8   174
+
+confusion matrix - ResNet18 (ImageNet pretrained) (row = true, col = predicted)
+          0     1     2     3     4     5     6     7     8     9
+  0      70     4     7     5     2     3     2    13     1     1
+  1       0   170     4     2     0     1     1     6     0     2
+  2       2     2   246     1     0     0     8     5     0     0
+  3       1     3     0   192     3     0     2     1     0     0
+  4       1     0     0     0    31     0     0     0     0     1
+  5       5     1     0     1     2   185     2     7     0     1
+  6       4     0     8     1     1     2   138    28     0     0
+  7      16     5     2     1     1     8    22   199     1     5
+  8       1     3     0     0     1     1     0     3   131     2
+  9       0     0     0     0     0     4     1     3     4   175
+
+McNemar exact test (Bonferroni-corrected threshold p < 0.0167)
+  SimpleCNN vs ResNet18 (random init)
+    only first right:   70 | only second right:  139 | p = 2.09e-06  -> significant
+  SimpleCNN vs ResNet18 (ImageNet pretrained)
+    only first right:   71 | only second right:  187 | p = 3.21e-13  -> significant
+  ResNet18 (random init) vs ResNet18 (ImageNet pretrained)
+    only first right:   70 | only second right:  117 | p = 7.26e-04  -> significant
+
+metrics written to logs/test_metrics.json

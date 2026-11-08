@@ -99,7 +99,7 @@ class Galaxy10Dataset(Dataset):
 
 IMAGENET_MEAN = [0.485, 0.456, 0.406]
 IMAGENET_STD = [0.229, 0.224, 0.225]
-
+CROP  = 140
 
 def build_transforms(resolution: int, pretrained: bool, train: bool):
     """
@@ -109,7 +109,7 @@ def build_transforms(resolution: int, pretrained: bool, train: bool):
     """
     # steps = []
     steps = [
-        transforms.CenterCrop(140),
+        transforms.CenterCrop(CROP),
         transforms.Resize((resolution, resolution), antialias=True),
     ]
 

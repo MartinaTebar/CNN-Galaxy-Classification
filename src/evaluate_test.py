@@ -57,7 +57,7 @@ MODELS = {
     "SimpleCNN": dict(
         ckpt=CKPT_DIR / "simplecnn.pt",
         build=lambda: SimpleCNN(num_classes=len(CLASS_NAMES)),
-        resolution=128, imagenet_norm=False,
+        resolution=140, imagenet_norm=False,
     ),
     "ResNet18 (random init)": dict(
         ckpt=CKPT_DIR / "resnet18_random.pt",
