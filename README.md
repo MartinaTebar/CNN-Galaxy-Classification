@@ -18,20 +18,20 @@ We train all three models on the same data split, compare them on a held-out tes
 
 ## Key Results
 
-| Model | Parameters | Input | Val accuracy | Test accuracy | Test balanced acc. | Test macro F1 |
-|---|---|---|---|---|---|---|
-| SimpleCNN | 0.39M | 140×140 | 81.4% | 80.4% | 78.2% | 78.2% |
-| ResNet18 (random init) | 11.2M | 224×224 | 86.8% | 84.3% | 82.7% | 82.5% |
-| ResNet18 (ImageNet pretrained) | 11.2M | 224×224 | **88.5%** | **86.9%** | **86.7%** | **86.1%** |
+| Model | Parameters | Input | Val accuracy | Test accuracy | Test balanced acc. |
+|---|---|---|---|---|---|
+| SimpleCNN | 0.39M | 140×140 | 81.4% | 80.4% | 78.2% |
+| ResNet18 (random init) | 11.2M | 224×224 | 86.8% | 84.3% | 82.7% |
+| ResNet18 (ImageNet pretrained) | 11.2M | 224×224 | **88.5%** | **86.9%** | **86.7%** |
 
-For reference, random guessing scores 10%, and always predicting the most common class ("Round Smooth") scores 14.9%. The test set has 1,768 images.
+For some context, random guessing scores 10%, and always predicting the most common class ("Round Smooth") scores 14.9%. The test set has 1,768 images.
 
 **Are the differences real?** McNemar's test on the test set (see [McNemar's test](#mcnemars-test-compare_modelspy-evaluate_testpy)), with a Bonferroni-corrected threshold of p < 0.0167 for three comparisons:
 
-| Comparison (A vs B) | What it tests | Only A right | Only B right | p-value | Significant? |
+| Comparison | What it tests | Only 1st one| Only 2nd one | p-value | Significant? |
 |---|---|---|---|---|---|
-| SimpleCNN vs ResNet18 (random init) | small custom CNN vs standard deep network, both from scratch | 70 | 139 | 2.1 × 10⁻⁶ | yes |
-| ResNet18 (random init) vs ResNet18 (pretrained) | effect of pretraining alone (same network, same training) | 70 | 117 | 7.3 × 10⁻⁴ | yes |
+| SimpleCNN vs ResNet18 (with random init) | small custom CNN vs standard deep network, both from scratch | 70 | 139 | 2.1 × 10⁻⁶ | yes |
+| ResNet18 (with random init) vs ResNet18 (pretrained) | effect of pretraining alone (same network, same training) | 70 | 117 | 7.3 × 10⁻⁴ | yes |
 | SimpleCNN vs ResNet18 (pretrained) | both steps together | 71 | 187 | 3.2 × 10⁻¹³ | yes |
 
 **Takeaways**
@@ -49,7 +49,7 @@ For reference, random guessing scores 10%, and always predicting the most common
 
 ### The dataset: Galaxy10 DECaLS
 
-Galaxy10 DECaLS contains colour (g, r, z band) images of galaxies from the DESI Legacy Imaging Surveys, labelled by citizen scientists in [Galaxy Zoo](https://www.zooniverse.org/projects/zookeeper/galaxy-zoo/). We use the version with duplicate images removed: **17,675 images**, 256×256 pixels, in 10 classes.
+Galaxy10 DECaLS contains colour (g, r, z band) images of galaxies from the DESI Legacy Imaging Surveys, labelled by citizen scientists in [Galaxy Zoo](https://www.zooniverse.org/projects/zookeeper/galaxy-zoo/). In this project we use the version with duplicate images removed: **17,675 images**, 256×256 pixels, in 10 classes.
 
 | # | Class | Images |
 |---|---|---|
@@ -64,7 +64,7 @@ Galaxy10 DECaLS contains colour (g, r, z band) images of galaxies from the DESI 
 | 8 | Edge-on without Bulge | 1,419 |
 | 9 | Edge-on with Bulge | 1,865 |
 
-The classes are **imbalanced**: there are 8× more Round Smooth galaxies than Cigar Shaped ones. Because of this, we report balanced accuracy and macro F1 alongside plain accuracy.
+The classes are **imbalanced**: there are 8× more Round Smooth galaxies than Cigar Shaped ones. Plain accuracy counts every image equally, so it is dominated by the large classes. We therefore also report **balanced accuracy**: the average of the recall of each class, so that a rare class counts as much as a common one.
 
 The data is split **80 / 10 / 10** into train (14,139), validation (1,768) and test (1,768) sets. The split is **stratified**, so every set has the same class proportions, and uses a fixed seed (42), so it is identical every time.
 
@@ -225,8 +225,9 @@ Below you can see the confusion matrix of the best model, the pretrained ResNet1
 
 ## References
 
-- Leung, H. W. & Bovy, J. — [astroNN / Galaxy10 DECaLS dataset](https://astronn.readthedocs.io/en/latest/galaxy10.html)
-- Walmsley, M. et al. (2022) — [Galaxy Zoo DECaLS: detailed visual morphology measurements from volunteers and deep learning for 314,000 galaxies](https://arxiv.org/abs/2102.08414), MNRAS 509, 3966
+Leung, H. W. & Bovy, J. — [astroNN / Galaxy10 DECaLS dataset](https://astronn.readthedocs.io/en/latest/galaxy10.html)
+
+Walmsley, M. et al. (2022) — [Galaxy Zoo DECaLS: detailed visual morphology measurements from volunteers and deep learning for 314,000 galaxies](https://arxiv.org/abs/2102.08414), MNRAS 509, 3966
 
 
 ## License
