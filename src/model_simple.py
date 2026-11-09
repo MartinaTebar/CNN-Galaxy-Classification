@@ -12,9 +12,11 @@ MENTAL MODEL
   Every time you shrink, you can afford to double the number of channels,
   because the tensor is 4x smaller in area. So the tensor marches like:
 
-      (3, 128, 128) -> (32, 64, 64) -> (64, 32, 32) -> (128, 16, 16) -> (256, 8, 8)
+      (3, 140, 140) -> (32, 70, 70) -> (64, 35, 35) -> (128, 17, 17) -> (256, 8, 8)
        ^ lots of pixels,                                                ^ few pixels,
          few channels                                                     many channels
+
+  (Odd sizes are rounded down by the pooling: 35 -> 17, 17 -> 8.)
 
   Early channels learn edges and blobs. Later channels, which see a much
   larger patch of the original image, learn things like "spiral arm",
@@ -85,9 +87,9 @@ class SimpleCNN(nn.Module):
         super().__init__()
 
         self.features = nn.Sequential(
-            conv_block(3, 32),      # (3, 128, 128) -> (32, 64, 64)
-            conv_block(32, 64),     #               -> (64, 32, 32)
-            conv_block(64, 128),    #               -> (128, 16, 16)
+            conv_block(3, 32),      # (3, 140, 140) -> (32, 70, 70)
+            conv_block(32, 64),     #               -> (64, 35, 35)
+            conv_block(64, 128),    #               -> (128, 17, 17)
             conv_block(128, 256),   #               -> (256, 8, 8)
         )
 

@@ -2,3 +2,5 @@ my_venv
 .DS_Store
 data/*
 !data/.gitkeep
+jupyter-notebook/*
+test.ipynb

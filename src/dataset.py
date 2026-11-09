@@ -103,7 +103,7 @@ CROP  = 140
 
 def build_transforms(resolution: int, pretrained: bool, train: bool):
     """
-    resolution : 128 for SimpleCNN, 224 for ResNet18
+    resolution : 140 for SimpleCNN (the 140 px crop, no resize), 224 for ResNet18
     pretrained : True -> ImageNet normalisation, False -> [-1, 1]
     train      : True -> include random augmentation
     """

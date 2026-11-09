@@ -3,7 +3,7 @@ train_simple.py
 ---------------
 The smallest honest training loop, for SimpleCNN. Run from the repo root:
 
-    python src/train_simple.py | tee logs/simplecnn.txt
+    python src/train_simple.py | tee logs/simplecnn_crop140.txt
 
 MENTAL MODEL
   Training is one loop, repeated:
