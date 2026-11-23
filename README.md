@@ -29,7 +29,7 @@ For some context, random guessing scores 10%, and always predicting the most com
 As evidence supporting the differences between the models being real, we give below the McNemar's test on the test set (see [McNemar's test](#mcnemars-test-compare_modelspy-evaluate_testpy)), with a Bonferroni-corrected threshold of p < 0.0167 for three comparisons:
 
 | Comparison | Only 1st one| Only 2nd one | p-value |
-|---|---|---|---|---|---|
+|---|---|---|---|
 | SimpleCNN vs ResNet18 (with random init) | 70 | 139 | 2.1 × 10⁻⁶ |
 | ResNet18 (with random init) vs ResNet18 (pretrained) | 70 | 117 | 7.3 × 10⁻⁴ |
 | SimpleCNN vs ResNet18 (pretrained) | 71 | 187 | 3.2 × 10⁻¹³ |
