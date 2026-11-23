@@ -11,10 +11,10 @@ Modern sky surveys photograph far more galaxies than humans could ever label by 
 
 In this project we consider how much better a standard deep network is (ResNet18, 11.2M parameters) than a compact CNN designed from scratch (SimpleCNN, 0.39M parameters). 
 
-We also test **transfer learning**: starting ResNet18 from weights learned on everyday photos (ImageNet) instead of random ones. Pretraining costs nothing extra at training time, but it can greatly change how well a network does when, as here, the labelled data is limited.
+We also test **transfer learning**: starting ResNet18 from weights learned on everyday photos (ImageNet) instead of random ones. Pretraining does not cost anything at training time, but it can greatly change how well a network does when, as here, the labelled data is limited.
 
 
-We train all three models on the same data split, compare them on a held-out test set, use McNemar's test to check whether the differences are statistically significant, and analyse which galaxy classes each model gets wrong.
+We train all three models on the same data split, compare them on a held-out test set, use McNemar's test to check whether the differences are statistically significant, and analyze which galaxy classes each model gets wrong.
 
 ## Key Results
 
@@ -26,21 +26,22 @@ We train all three models on the same data split, compare them on a held-out tes
 
 For some context, random guessing scores 10%, and always predicting the most common class ("Round Smooth") scores 14.9%. The test set has 1,768 images.
 
-**Are the differences real?** McNemar's test on the test set (see [McNemar's test](#mcnemars-test-compare_modelspy-evaluate_testpy)), with a Bonferroni-corrected threshold of p < 0.0167 for three comparisons:
+As evidence supporting the differences between the models being real, we give below the McNemar's test on the test set (see [McNemar's test](#mcnemars-test-compare_modelspy-evaluate_testpy)), with a Bonferroni-corrected threshold of p < 0.0167 for three comparisons:
 
-| Comparison | What it tests | Only 1st one| Only 2nd one | p-value | Significant? |
+| Comparison | Only 1st one| Only 2nd one | p-value |
 |---|---|---|---|---|---|
-| SimpleCNN vs ResNet18 (with random init) | small custom CNN vs standard deep network, both from scratch | 70 | 139 | 2.1 × 10⁻⁶ | yes |
-| ResNet18 (with random init) vs ResNet18 (pretrained) | effect of pretraining alone (same network, same training) | 70 | 117 | 7.3 × 10⁻⁴ | yes |
-| SimpleCNN vs ResNet18 (pretrained) | both steps together | 71 | 187 | 3.2 × 10⁻¹³ | yes |
+| SimpleCNN vs ResNet18 (with random init) | 70 | 139 | 2.1 × 10⁻⁶ |
+| ResNet18 (with random init) vs ResNet18 (pretrained) | 70 | 117 | 7.3 × 10⁻⁴ |
+| SimpleCNN vs ResNet18 (pretrained) | 71 | 187 | 3.2 × 10⁻¹³ |
 
 **Takeaways**
 
-- **Each step up is a real improvement.** ResNet18 beats SimpleCNN even without pretraining, and pretraining improves ResNet18 further. All three differences are statistically significant.
-- **A bigger network helps, but less than its size suggests.** ResNet18 from scratch has about 29× more parameters than SimpleCNN, and is 3.9 points more accurate (4.5 points of balanced accuracy). This comparison changes more than the network: ResNet18 also uses a larger input (224 vs 140 pixels) and its own hyperparameters, so the gain is for the whole recipe, not for parameter count alone.
-- **Pretraining adds a similar gain at no extra cost.** Starting from ImageNet weights adds another 2.6 points of accuracy and 4.0 points of balanced accuracy, with the same network and the same training. It also makes training faster: the pretrained model reaches 77% validation accuracy after one epoch, versus 65% from random weights. Features learned from everyday photos clearly carry over to galaxies.
-- **Pretraining helps most on the hardest, rarest classes.** Recall on "Disturbed" rises from 43% to 65%, and on "Cigar Shaped Smooth" from 85% to 94% (see [What the errors tell us](#what-the-errors-tell-us)).
-- **The hardest class is "Disturbed"** (recall 32–65% depending on the model), followed by the two **unbarred spiral** classes, which are often mistaken for each other.
+- ResNet18 beats SimpleCNN even without pretraining, and pretraining improves ResNet18 further. All three differences are statistically significant.
+- The differences are significant, as can be seen by comparing the p-values found with the threshold.
+- ResNet18 from scratch has about 29× more parameters than SimpleCNN, and is 3.9 points more accurate (4.5 points of balanced accuracy), suggesting that the increasing size of the network did not help proportionately. This comparison changes more than the network: ResNet18 also uses a larger input (224 vs 140 pixels) and its own hyperparameters, so the gain is for the whole recipe, not for parameter count alone.
+- Pretraining of the ResNet18 adds a similar gain at no extra cost. Starting from ImageNet weights adds another 2.6 points of accuracy and 4.0 points of balanced accuracy, with the same network and the same training. It also makes training faster: the pretrained model reaches 77% validation accuracy after one epoch, versus 65% from random weights. Features learned from everyday photos clearly carry over to galaxies.
+- Importantly, pretraining helps most on the hardest, rarest classes. Recall on "Disturbed" rises from 43% to 65%, and on "Cigar Shaped Smooth" from 85% to 94% (see [What the errors tell us](#what-the-errors-tell-us)).
+- The hardest class is "Disturbed" (recall 32–65% depending on the model), followed by the two "unbarred spiral" classes, which are often mistaken for each other.
 
 <!-- TODO: add a figure here, e.g. the confusion matrix of the best model or training curves -->
 
@@ -49,7 +50,7 @@ For some context, random guessing scores 10%, and always predicting the most com
 
 ### The dataset: Galaxy10 DECaLS
 
-Galaxy10 DECaLS contains colour (g, r, z band) images of galaxies from the DESI Legacy Imaging Surveys, labelled by citizen scientists in [Galaxy Zoo](https://www.zooniverse.org/projects/zookeeper/galaxy-zoo/). In this project we use the version with duplicate images removed: **17,675 images**, 256×256 pixels, in 10 classes.
+Galaxy10 DECaLS contains color (g, r, z band) images of galaxies from the DESI Legacy Imaging Surveys, labelled by citizen scientists in [Galaxy Zoo](https://www.zooniverse.org/projects/zookeeper/galaxy-zoo/). In this project we use the version with duplicate images removed: **17,675 images**, 256×256 pixels, in 10 classes.
 
 | # | Class | Images |
 |---|---|---|
@@ -73,30 +74,29 @@ The data is split **80 / 10 / 10** into train (14,139), validation (1,768) and t
 
 **SimpleCNN** is a compact network built from scratch. It has four convolutional blocks (Conv 3×3 → BatchNorm → ReLU → MaxPool). Each block halves the image size and doubles the number of channels (32 → 64 → 128 → 256). The blocks are followed by global average pooling, dropout (0.3) and a linear layer with 10 outputs. It has 391k parameters.
 
-**ResNet18** ([He et al., 2016](https://arxiv.org/abs/1512.03385)) is a standard 18-layer network. Its *residual connections* let it be much deeper than SimpleCNN while still training well. We replace its final 1000-class ImageNet layer with a 10-class layer. It has 11.2M parameters.
+**ResNet18** ([He et al., 2016](https://arxiv.org/abs/1512.03385)) is a standard 18-layer network. Its residual connections let it be much deeper than SimpleCNN while still training well. We replace its final 1000-class ImageNet layer with a 10-class layer. It has 11.2M parameters.
 
-**Transfer learning.** The pretrained ResNet18 starts from weights learned on ImageNet, which contains 1.2M everyday photos. The first layers of any image network learn generic features such as edges, gradients and textures, so we expect these to be useful for galaxies too. We **fine-tune** all layers rather than freezing them, because galaxy images are very different from ImageNet photos. To make it a fair comparison, the random-init ResNet18 is trained in exactly the same way: same preprocessing, same normalisation and same hyperparameters. Only the starting weights differ.
+**Transfer learning.** The pretrained ResNet18 starts from weights learned on ImageNet, which contains 1.2M everyday photos. The first layers of any image network learn generic features such as edges, gradients and textures, so we expect these to be useful for galaxies too. We **fine-tune** all layers rather than freezing them, because galaxy images are very different from ImageNet photos. To make it a fair comparison, the random-init ResNet18 is trained in exactly the same way: same preprocessing, same normalization and same hyperparameters. Only the starting weights differ.
 
 ### Training setup
 
 | | SimpleCNN | ResNet18 (both versions) |
 |---|---|---|
 | Input size | 140×140 | 224×224 |
-| Normalisation | scaled to [-1, 1] | ImageNet mean / std |
-| Optimiser | AdamW, lr 1e-3, weight decay 1e-4 | AdamW, lr 1e-4, weight decay 1e-4 |
+| Normalization | scaled to [-1, 1] | ImageNet mean / std |
+| Optimizer | AdamW, lr 1e-3, weight decay 1e-4 | AdamW, lr 1e-4, weight decay 1e-4 |
 | LR schedule | cosine annealing | cosine annealing |
 | Batch size | 64 | 32 |
 | Epochs | 60 | 30 |
 
 All models share the following:
 
-- **Preprocessing:** center-crop to 140×140, which removes empty sky around the galaxy. SimpleCNN uses the crop as it is; for ResNet18 it is resized to 224×224, which is the size the network was designed for.
+- **Preprocessing:** center-crop of all images to 140×140, which removes empty sky around the galaxy (in the overwhelming majority of cases). SimpleCNN uses the crop as it is, while for ResNet18 it is resized to 224×224, which is the size the network was designed for.
 - **Augmentation (training only):** random horizontal and vertical flips and random rotations up to 180°. Galaxies have no natural "up" direction in the sky, so a rotated galaxy is still a valid example of its class.
-- **Loss:** cross-entropy.
+- **Loss:** cross-entropy loss.
 - **Checkpointing:** the weights from the epoch with the best validation accuracy are kept.
-- **Seed:** 42. The seed fixes the initial weights, the order of the training batches and the random augmentations, so a rerun gives (almost) the same model. GPU computations on Apple Silicon are not perfectly deterministic, so reruns can differ very slightly.
-
-**Why 60 epochs for SimpleCNN and 30 for ResNet18?** ResNet18 is about 29× larger and works on bigger images, so each epoch takes much longer. 30 epochs is enough for it: the pretrained model's validation accuracy is 88.4% at epoch 21 and 88.5% at epoch 30. SimpleCNN is cheap to train but learns more slowly (higher learning rate, no pretrained features, and its training accuracy is still only about 81% at the end), so it gets 60 epochs.
+- **Seed:** 42. The seed fixes the initial weights, the order of the training batches and the random augmentations, so a rerun gives (almost, depending on the GPU) the same model.
+**Why we set 60 epochs for SimpleCNN and 30 for ResNet18:** ResNet18 is about 29× larger and works on bigger images, so each epoch takes much longer. 30 epochs is enough for it, as the pretrained model's validation accuracy is 88.4% at epoch 21 and 88.5% at epoch 30. SimpleCNN is cheap to train but learns more slowly (higher learning rate, no pretrained features, and its training accuracy is still only about 81% at the end), so we set 60 epochs.
 
 Training ran on an Apple Silicon GPU (PyTorch MPS backend).
 <!-- TODO: add approximate training time per model -->
@@ -113,7 +113,7 @@ source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-**Get the data.** Download [Galaxy10_DECals_NoDuplicated.h5](https://zenodo.org/records/10845026 ) (~2.5 GB) and place it in `data/`.
+To **get the data**, download [Galaxy10_DECals_NoDuplicated.h5](https://zenodo.org/records/10845026 ) (~2.5 GB) and place it in `data/`.
 
 
 ## Quick Start
@@ -136,7 +136,7 @@ python src/train_resnet.py --random | tee logs/resnet_random.txt
 
 > Trained checkpoints are already included in `checkpoints/`, so you can skip this step and go straight to evaluation.
 
-**3. Analyse the results.**
+**3. Analyze the results.**
 
 ```bash
 python src/diagnose.py          # per-class recall/precision + confusion matrix (validation set)
@@ -151,14 +151,16 @@ Hyperparameters are set as constants at the top of each training script. `diagno
 
 ### Training logs (`logs/*.txt`)
 
-Each line shows one epoch: the learning rate, then the loss and accuracy on the training set and on the validation set. `<- saved` marks a new best validation accuracy, which is when the checkpoint is overwritten. If training accuracy keeps rising while validation accuracy stalls, the model is starting to **overfit**.
+Each line shows one epoch: the learning rate, then the loss and accuracy on the training set and on the validation set. `<- saved` marks a new best validation accuracy, which is when the checkpoint is overwritten. If training accuracy keeps rising while validation accuracy stalls, the model is starting to overfit.
 
 ### Per-class recall and precision (`diagnose.py`)
+
+We use standard definitions:
 
 - **Recall:** of all the real galaxies of a class, what fraction did the model catch?
 - **Precision:** of all the galaxies the model *called* that class, what fraction were right?
 
-A class with low recall is one the model often misses. This usually happens to rare or visually ambiguous classes.
+A class with low recall is one which the model often misses. This usually happens to rare or visually ambiguous classes.
 
 ### Confusion matrix
 
@@ -166,7 +168,7 @@ Rows are the true class and columns are the predicted class. The diagonal holds 
 
 ### McNemar's test (`compare_models.py`, `evaluate_test.py`)
 
-All models are evaluated on the *same* images, so we compare them image by image rather than just comparing their accuracies. McNemar's test only looks at the images where the two models **disagree**. If the models were equally good, each one would win about half of those disagreements. The p-value is the probability of seeing a split at least as lopsided as the one observed if the models really were equally good. With three models we run three comparisons, so we use a Bonferroni-corrected threshold of 0.05 / 3 ≈ 0.0167.
+All models are evaluated on the same images, so we compare them image by image rather than just comparing their accuracies. McNemar's test only looks at the images where the two models **disagree**. If the models were equally good, each one would win about half of those disagreements. The p-value is the probability of seeing a split at least as lopsided as the one observed if the models really were equally good. With three models we run three comparisons, so we use a Bonferroni-corrected threshold of 0.05 / 3 ≈ 0.0167.
 
 ### What the errors tell us
 
@@ -189,10 +191,12 @@ Below you can see the confusion matrix of the best model, the pretrained ResNet1
 
 ![Confusion matrix of the pretrained ResNet18 on the test set](figures/confusion_resnet_pretrained.png)
 
-- **"Disturbed" is the hardest class for every model.** SimpleCNN catches only a third of these galaxies and labels 28 of the 108 as *Unbarred Loose Spiral*. "Disturbed" is a catch-all for irregular galaxies, so it has no single visual signature, and it is also the class human volunteers disagree on most.
-- **Tight and loose unbarred spirals get mixed up in both directions.** For the pretrained ResNet, 28 tight spirals are called loose and 22 loose spirals are called tight. How tightly the arms are wound varies continuously, so the line between the two classes is somewhat arbitrary. Both classes stay between 69% and 77% recall for all three models, so neither more parameters nor pretraining solves this. SimpleCNN has the most trouble here: it calls 36 of the 182 tight spirals loose.
-- **Easy classes:** Round Smooth, In-between Round Smooth and the two edge-on classes are above 90% recall for every model, including SimpleCNN. These shapes are visually distinctive, and a small network is enough to recognise them.
-- **Pretraining helps most where data is scarce or the class is ambiguous:** Disturbed (+22 points of recall compared with random init), Cigar Shaped Smooth (+9, only 267 training images), Unbarred Loose Spiral (+5) and Merging (+4). On the easy classes it makes almost no difference.
+We find some key takeaways here as well:
+
+- **"Disturbed" is the hardest class for every model:** SimpleCNN catches only a third of these galaxies and labels 28 of the 108 as *Unbarred Loose Spiral*. "Disturbed" is a catch-all for irregular galaxies, so it has no single visual signature, and it is also the class human volunteers disagree on most.
+- **Tight and loose unbarred spirals get mixed up in both directions:** For the pretrained ResNet18, 28 tight spirals are called loose and 22 loose spirals are called tight. How tightly the arms are wound varies continuously, so the line between the two classes is somewhat arbitrary. Both classes stay between 69% and 77% recall for all three models, so neither more parameters nor pretraining solves this. SimpleCNN has the most trouble here: it calls 36 of the 182 tight spirals loose.
+- **Easy classes:** Round Smooth, In-between Round Smooth and the two edge-on classes are above 90% recall for every model, including SimpleCNN. These shapes are visually distinctive, and a small network is enough to recognize them.
+- **Pretraining helps most where data is scarce or the class is ambiguous:** Disturbed (+22 points of recall compared with random initialization), Cigar Shaped Smooth (+9, only 267 training images), Unbarred Loose Spiral (+5) and Merging (+4). On the easy classes it makes almost no difference.
 
 ## Project Structure
 
